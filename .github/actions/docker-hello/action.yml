@@ -1,0 +1,13 @@
+name: Docker Hello
+description: Print a greeting from an Alpine container
+
+inputs:
+  who:
+    description: Person to greet
+    default: World
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.who }}
