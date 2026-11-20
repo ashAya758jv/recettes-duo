@@ -5,8 +5,8 @@
 
 Les réponses du TP6 sont conservées dans leur branche d'origine :
 [REPONSES.md du TP6](https://github.com/ashAya758jv/recettes-duo/blob/feature/tp-env/REPONSES.md).
-Ce fichier était absent de `main` au départ du TP7 ; aucun contenu antérieur n'a
-été effacé et aucune ancienne branche n'a été modifiée.
+Ce fichier était absent de `main` au départ du TP7 ; aucune réponse antérieure
+n'a été effacée et les fichiers des TP5 et TP6 sont inchangés.
 
 ## Q1 — Pourquoi checkout n'a-t-il pas nécessairement besoin de `with` ?
 
@@ -65,25 +65,53 @@ d'environnement avant leur utilisation dans les scripts Bash.
 - Scripts Bash exécutés : identifiant par défaut `my-app-1.0.0`, version
   personnalisée `2.3.4`, conservation des outputs déjà présents et traitement
   littéral d'un nom contenant `$(false)` vérifiés.
-- Génération et lecture de `report.txt` vérifiées avec le Node.js local.
-  L'installation de Node.js 20 par `setup-node` reste à valider sur le runner.
+- Génération et lecture de `report.txt` vérifiées avec le Node.js local, puis
+  installation de Node.js 20 confirmée sur le runner lors de la validation distante.
 - Image Docker réellement construite ; `docker run --rm tp7-docker-hello:local Aya`
   affiche exactement `Hello, Aya`.
 - Tous les fichiers déjà présents dans `main`, y compris les workflows du TP6
   et les recettes, sont conservés sans modification.
 
-**Statut : validation GitHub Actions encore en attente.** Les contrôles locaux
-ne prouvent pas encore le transfert réel de l'artefact entre deux jobs GitHub.
-Aucune durée distante et aucune capture d'exécution réussie ne sont inventées.
+## Validation GitHub Actions réelle
+
+[Exécution réussie du 20 novembre 2026](https://github.com/ashAya758jv/recettes-duo/actions/runs/44807967504),
+lancée manuellement sur `feature/tp-actions`, commit `cc47b5c` :
+
+| Job | Résultat vérifié |
+| --- | --- |
+| [`build`](https://github.com/ashAya758jv/recettes-duo/actions/runs/44807967504/job/136536840036) | Réussi ; sortie `my-app-1.0.0`, Node.js `v20.20.2`, artefact publié |
+| [`verify`](https://github.com/ashAya758jv/recettes-duo/actions/runs/44807967504/job/136536930350) | Réussi ; artefact téléchargé et `report.txt` affiché |
+| [`docker-hello`](https://github.com/ashAya758jv/recettes-duo/actions/runs/44807967504/job/136536839400) | Réussi ; image construite et message `Hello, Aya` confirmé dans les journaux |
+
+L'artefact [`build-report`](https://github.com/ashAya758jv/recettes-duo/actions/runs/44807967504/artifacts/14664655757)
+est présent et non expiré au contrôle. Son archive ZIP de **186 octets** a été
+réellement téléchargée ; elle contient uniquement `report.txt` :
+
+```text
+Node.js: v20.20.2 | Date (UTC): 2026-11-20T20:04:20Z
+```
+
+Ce contenu est identique à la ligne affichée dans les journaux de `verify`.
+Le SHA-256 de l'archive téléchargée correspond au digest publié par GitHub :
+
+```text
+e61de6d1302f7d23ab39f7ffd30ca23f4935db67274f24edaa59df4d44833c65
+```
+
+Le code du workflow et des actions est celui de cette exécution ; le commit
+de documentation suivant ajoute les résultats observés. La capture réelle
+reste à fournir pour compléter les livrables du TP.
 
 ## Lancement manuel sur GitHub
 
 GitHub exige que le workflow soit présent sur la branche par défaut pour activer
 `workflow_dispatch`. Au contrôle initial, `main` ne contenait pas `tp-actions.yml`.
-Une copie de ce seul fichier est préparée pour publication sur `main`, soumise
-à l'autorisation explicite de l'étudiante. Aucune fusion de branche n'est requise.
+Après autorisation explicite de l'étudiante, **seul ce fichier** a été ajouté à
+`main` par le [commit `174a3f8`](https://github.com/ashAya758jv/recettes-duo/commit/174a3f83ab4a8ed4eb313711f76f42d6d4f2a20e).
+Ce commit a un seul parent et ne constitue pas une fusion. Les fichiers des
+TP5 et TP6 ainsi que les anciennes branches de travail sont conservés.
 
-Après cette autorisation et la publication du seul fichier de workflow :
+Pour relancer le workflow :
 
 1. Ouvrir [Actions du dépôt](https://github.com/ashAya758jv/recettes-duo/actions).
 2. Choisir **Third-Party and Custom Actions Lab**, puis **Run workflow**.
@@ -96,23 +124,29 @@ Après cette autorisation et la publication du seul fichier de workflow :
 7. Dans le résumé, vérifier la présence de **build-report** dans **Artifacts**,
    le télécharger et contrôler son fichier `report.txt`.
 
-## Comparaison des durées : à compléter avec une exécution réelle
+## Comparaison des durées mesurées sur GitHub Actions
 
-Relever les horodatages `started_at` et `completed_at` des steps dans l'API des
-jobs d'une même exécution réussie, ou les durées affichées dans les journaux :
+Mesures issues des champs `started_at` et `completed_at` des steps de
+[l'API des jobs de cette exécution](https://api.github.com/repos/ashAya758jv/recettes-duo/actions/runs/44807967504/jobs) :
 
-| Élément | Statut de la mesure GitHub Actions |
-| --- | --- |
-| `Run build info action` | En attente d'une exécution réelle |
-| `Run Docker hello action` | En attente d'une exécution réelle |
-| Construction de l'image Docker | En attente ; peut apparaître dans la préparation du job |
+| Step | Début UTC | Fin UTC | Durée selon l'API |
+| --- | --- | --- | --- |
+| `Run build info action` | 20:04:17 | 20:04:17 | 0 s à la précision de l'API |
+| `Run Docker hello action` | 20:04:17 | 20:04:19 | 2 s |
 
-La construction de l'image et le démarrage du conteneur ajoutent du travail
-par rapport à une action composite. Il faut distinguer ce coût du seul temps
-du message de salutation, et ne pas comparer les durées complètes des jobs :
-`build` effectue aussi l'installation de Node.js et la publication de l'artefact.
-L'API des steps a une précision à la seconde ; une durée affichée de zéro ne
-signifie pas que l'action n'a effectué aucun travail.
+Les journaux confirment que, pour cette action locale, la construction de l'image
+a lieu dans la step Docker : `docker build` démarre à `20:04:17.923` UTC, puis
+`docker run` à `20:04:19.726` UTC, soit un intervalle d'environ **1,80 s** incluant
+la construction et la transition vers l'exécution. Le message arrive à
+`20:04:19.906` UTC.
+
+Sur cette exécution, la step Docker prend davantage de temps que l'action
+composite. Son coût comprend la construction de l'image et le démarrage du
+conteneur. L'API des steps a une précision à la seconde : **0 s n'est pas une
+mesure d'une durée nulle**. Ces deux actions effectuent des tâches différentes ;
+ces observations ne constituent pas un benchmark général. Les durées complètes
+des jobs ne sont pas comparées, car `build` installe aussi Node.js et publie
+l'artefact.
 
 ## Capture réelle à fournir après la réussite
 
