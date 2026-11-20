@@ -98,9 +98,9 @@ Le SHA-256 de l'archive téléchargée correspond au digest publié par GitHub :
 e61de6d1302f7d23ab39f7ffd30ca23f4935db67274f24edaa59df4d44833c65
 ```
 
-Le code du workflow et des actions est celui de cette exécution ; le commit
-de documentation suivant ajoute les résultats observés. La capture réelle
-reste à fournir pour compléter les livrables du TP.
+Le code du workflow et des actions est celui de cette exécution ; les commits
+de documentation suivants ajoutent les résultats observés et les deux captures
+réelles fournies par l'étudiante, présentées ci-dessous.
 
 ## Lancement manuel sur GitHub
 
@@ -148,11 +148,25 @@ ces observations ne constituent pas un benchmark général. Les durées complèt
 des jobs ne sont pas comparées, car `build` installe aussi Node.js et publie
 l'artefact.
 
-## Capture réelle à fournir après la réussite
+## Captures réelles de l'exécution réussie
 
-Suivre [les consignes de capture](screenshots/README.md). La capture sera ajoutée
-à `screenshots/tp7-actions-success.png` puis publiée avec un commit dédié sur
-`feature/tp-actions`. Une capture réelle n'a pas encore été fournie.
+Les deux captures fournies par l'étudiante sont conservées dans
+[`screenshots/`](screenshots/README.md) sur `feature/tp-actions`.
+
+Résumé : statut **Success**, branche `feature/tp-actions`, jobs `build`, `verify`
+et `docker-hello` réussis, compteur **Artifacts: 1**.
+
+![Résumé de l'exécution réussie du TP7](screenshots/tp7-actions-success.png)
+
+Rapport : step **Print build report** du job `verify`, avec Node.js `v20.20.2`
+et la date UTC correspondant au fichier téléchargé.
+
+![Rapport téléchargé et affiché dans verify](screenshots/tp7-build-report.png)
+
+Le nom `build-report` figure dans la section **Artifacts** du
+[résumé en ligne](https://github.com/ashAya758jv/recettes-duo/actions/runs/44807967504),
+plus bas que la zone visible dans la première capture. Son téléchargement et
+son contenu ont été vérifiés comme indiqué ci-dessus.
 
 ## Références
 
