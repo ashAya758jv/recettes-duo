@@ -1,0 +1,30 @@
+name: Env, Inputs and Outputs Lab
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set environment variables
+        run: |
+          echo "APP_NAME=my-app" >> "$GITHUB_ENV"
+          echo "BUILD_DATE=$(date +%F)" >> "$GITHUB_ENV"
+
+      - name: Print environment variables
+        run: echo "Application $APP_NAME built on $BUILD_DATE"
+
+  verify-env:
+    name: Verify environment scope
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print APP_NAME
+        run: echo "APP_NAME in another job = '$APP_NAME'"
