@@ -2,13 +2,36 @@ name: Env, Inputs and Outputs Lab
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environnement cible"
+        required: true
+        type: choice
+        options: [dev, staging, prod]
+      version:
+        description: "Version à déployer"
+        type: string
+        default: "1.0.0"
+      debug:
+        description: "Afficher les informations de debug"
+        type: boolean
+        default: false
+  # Allows validation before the workflow is available on the default branch.
+  push:
+    branches: [feature/tp-env]
+    paths:
+      - .github/workflows/tp-env.yml
+      - .github/workflows/greeting.yml
 
 permissions:
   contents: read
 
+env:
+  DEPLOYMENT_ENVIRONMENT: ${{ inputs.environment || 'staging' }}
+  DEPLOYMENT_VERSION: ${{ inputs.version || '1.0.0' }}
+
 jobs:
   build:
-    name: Build application
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -21,6 +44,19 @@ jobs:
 
       - name: Print environment variables
         run: echo "Application $APP_NAME built on $BUILD_DATE"
+
+      - name: Print deployment inputs
+        run: |
+          echo "Environment: $DEPLOYMENT_ENVIRONMENT"
+          echo "Version: $DEPLOYMENT_VERSION"
+
+      - name: Print debug information
+        if: ${{ inputs.debug }}
+        run: |
+          echo "Application: $APP_NAME"
+          echo "Build date: $BUILD_DATE"
+          echo "Environment: $DEPLOYMENT_ENVIRONMENT"
+          echo "Version: $DEPLOYMENT_VERSION"
 
   verify-env:
     name: Verify environment scope
