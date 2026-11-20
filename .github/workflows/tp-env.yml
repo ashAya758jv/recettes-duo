@@ -33,6 +33,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      full_version: ${{ steps.version.outputs.full_version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -58,9 +60,22 @@ jobs:
           echo "Environment: $DEPLOYMENT_ENVIRONMENT"
           echo "Version: $DEPLOYMENT_VERSION"
 
+      - name: Compute full version
+        id: version
+        run: echo "full_version=$DEPLOYMENT_VERSION-$(date +%F)" >> "$GITHUB_OUTPUT"
+
   verify-env:
     name: Verify environment scope
     runs-on: ubuntu-latest
     steps:
       - name: Print APP_NAME
         run: echo "APP_NAME in another job = '$APP_NAME'"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show deployment target
+        env:
+          FULL_VERSION: ${{ needs.build.outputs.full_version }}
+        run: echo "Deploying $FULL_VERSION to $DEPLOYMENT_ENVIRONMENT"
