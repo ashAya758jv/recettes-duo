@@ -13,6 +13,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Run build info action
+        id: info
+        uses: ./.github/actions/build-info
+        with:
+          app-name: my-app
+
+      - name: Print build id
+        env:
+          BUILD_ID: ${{ steps.info.outputs.build-id }}
+        run: |
+          printf 'Build id is %s\n' "$BUILD_ID"
+          test "$BUILD_ID" = 'my-app-1.0.0'
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
