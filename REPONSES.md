@@ -117,6 +117,24 @@ Une fois le workflow disponible sur la branche par défaut, après autorisation 
 4. Vérifier les jobs et prendre la capture comme indiqué ci-dessus. Lors d'une
    autre exécution avec `debug` décoché, cette step doit être ignorée.
 
+## Validation réalisée
+
+- `actionlint v1.7.12` : les deux workflows sont valides.
+- Exécution locale des scripts Bash : variables disponibles dans les steps
+  suivantes, isolation de `verify-env`, transfert de la version, salutation et
+  branchement debug vérifiés avec `false` puis `true`.
+- [Exécution GitHub Actions réussie du 20 novembre 2026](https://github.com/ashAya758jv/recettes-duo/actions/runs/44764063223),
+  déclenchée par le push du commit `953f17e` sur `feature/tp-env` : `build`,
+  `verify-env`, `call-greeting / greet` et `deploy` réussis. La step debug est
+  ignorée sur cette exécution automatique, comme prévu.
+- Les six fichiers du TP5 sont identiques à ceux de `main`. La branche `main`
+  est restée au commit `22705e9de37f922251275bc55b5594deb60a26f3` lors de la
+  vérification distante ; aucune fusion n'a été effectuée.
+
+Capture du résumé de cette exécution réelle :
+
+![Exécution réussie sur feature/tp-env avec les jobs build et deploy](captures/tp6-actions-success.png)
+
 ## Références
 
 - [Fichiers d'environnement et sorties de step](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#environment-files)
